@@ -1,12 +1,15 @@
 package com.java1337.work.jobcoin.app
 
-object App {
-  
-  def foo(x : Array[String]) = x.foldLeft("")((a,b) => a + b)
-  
-  def main(args : Array[String]) {
-    println( "Hello World!" )
-    println("concat arguments = " + foo(args))
-  }
+import java.util.logging.Logger
 
+
+object App {
+
+    private val logger = Logger.getLogger("com.java1337.work.jobcoin.app.App$")
+
+    def main(args : Array[String]): Unit = {
+        logger.info("Starting app")
+        Wiring.pollingWorkThread.start()
+        logger.info("App started")
+    }
 }
