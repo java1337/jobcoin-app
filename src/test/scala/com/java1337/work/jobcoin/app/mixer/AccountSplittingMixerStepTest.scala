@@ -1,8 +1,8 @@
 package com.java1337.work.jobcoin.app.mixer
 
-import com.java1337.work.jobcoin.app.{ConfigHardcoded, ConfigLike, TransferServiceFake}
-import com.java1337.work.jobcoin.app.TestHelper.{BOBS_ACCOUNT, FAKE_TRANSFER}
+import com.java1337.work.jobcoin.app.ConfigHardcoded.BOBS_ACCOUNT
 import com.java1337.work.jobcoin.app.domain.Transfer
+import com.java1337.work.jobcoin.app.{ConfigHardcoded, ConfigLike}
 import org.scalatest.{AsyncFlatSpec, Matchers}
 
 import scala.concurrent.Future
@@ -11,20 +11,18 @@ class AccountSplittingMixerStepTest extends AsyncFlatSpec with Matchers {
 
     behavior of "AccountSplittingMixerStep"
 
-    val DEPOSIT_AMOUNT: BigDecimal = java.math.BigDecimal.TEN
+    private val DEPOSIT_ADDRESS = ConfigHardcoded.BOBS_ACCOUNT.depositAddress
+    private val DEPOSIT_AMOUNT: BigDecimal = java.math.BigDecimal.TEN
 
     private def testOnTransferWith(input: Transfer, config: ConfigLike = new ConfigHardcoded): Seq[Future[Transfer]] = {
-        val accounts = Seq(BOBS_ACCOUNT)
-        val fakeTransferService = new TransferServiceFake(Future.successful(FAKE_TRANSFER))
-        val mixer = new AccountSplittingMixerStep(config, accounts, fakeTransferService)
-
+        val mixer = new AccountSplittingMixerStep(config)
         mixer.onTransfer(input)
     }
 
     it should "ignore transfers not sent to the House account" in {
 
         // given
-        val input = Transfer(BOBS_ACCOUNT.depositAddress, "NOT_HOUSE_ACCOUNT", DEPOSIT_AMOUNT)
+        val input = Transfer(DEPOSIT_ADDRESS, "NOT_HOUSE_ACCOUNT", DEPOSIT_AMOUNT)
 
         // when
         val actual = testOnTransferWith(input)
@@ -37,14 +35,14 @@ class AccountSplittingMixerStepTest extends AsyncFlatSpec with Matchers {
 
         // given
         val config = new ConfigHardcoded
-        val input = Transfer(BOBS_ACCOUNT.depositAddress, config.houseAddress, DEPOSIT_AMOUNT)
+        val input = Transfer(DEPOSIT_ADDRESS, config.houseAddress, DEPOSIT_AMOUNT)
 
         // when
         val actual = testOnTransferWith(input, config)
 
 
         // then
-        actual.size shouldBe 2
+        actual.size shouldBe 3
 
         actual.head.map { transferOne =>
             transferOne.sourceAddress shouldBe config.houseAddress

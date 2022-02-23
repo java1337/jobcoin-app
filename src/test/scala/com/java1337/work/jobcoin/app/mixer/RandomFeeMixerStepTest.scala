@@ -1,7 +1,7 @@
 package com.java1337.work.jobcoin.app.mixer
 
 import com.java1337.work.jobcoin.app.ConfigHardcoded
-import com.java1337.work.jobcoin.app.TestHelper.BOBS_ACCOUNT
+import com.java1337.work.jobcoin.app.ConfigHardcoded.BOBS_ACCOUNT
 import com.java1337.work.jobcoin.app.domain.Transfer
 import org.scalatest.{AsyncFlatSpec, Matchers}
 

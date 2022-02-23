@@ -9,4 +9,10 @@ trait ConfigLike {
     def houseAddress: String
     def minimumFeePercentage: Int
     def maximumFeePercentage: Int
+    def minimumWithdrawalTransferDelayInSeconds: Int
+    def maximumWithdrawalTransferDelayInSeconds: Int
+    def transactionPollingIntervalInSeconds: Int
+
+    def supportedDepositAccountMap: Map[String, Account] = accounts.map { it => (it.depositAddress, it) }.toMap
+
 }

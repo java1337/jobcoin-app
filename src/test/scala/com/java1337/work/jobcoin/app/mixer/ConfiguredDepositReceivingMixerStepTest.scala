@@ -1,8 +1,8 @@
 package com.java1337.work.jobcoin.app.mixer
 
-import com.java1337.work.jobcoin.app.TestHelper.BOBS_ACCOUNT
+import com.java1337.work.jobcoin.app.ConfigHardcoded.BOBS_ACCOUNT
+import com.java1337.work.jobcoin.app.domain.Transfer
 import com.java1337.work.jobcoin.app.{ConfigHardcoded, TransferServiceFake}
-import com.java1337.work.jobcoin.app.domain.{Account, Transfer, WithdrawalPercentAndAddress}
 import org.scalatest.{AsyncFlatSpec, Matchers}
 
 import scala.concurrent.Future
@@ -20,7 +20,7 @@ class ConfiguredDepositReceivingMixerStepTest extends AsyncFlatSpec with Matcher
         val fakeTransferService = new TransferServiceFake(Future.successful(expected))
 
         val transfer = Transfer("Bob", BOBS_ACCOUNT.depositAddress, 10)
-        val mixer = new ConfiguredDepositReceivingMixerStep(config, accounts, fakeTransferService)
+        val mixer = new ConfiguredDepositReceivingMixerStep(config, fakeTransferService)
 
         // when
         val actual = mixer.onTransfer(transfer)
@@ -43,7 +43,7 @@ class ConfiguredDepositReceivingMixerStepTest extends AsyncFlatSpec with Matcher
         val fakeTransferService = new TransferServiceFake(Future.successful(expected))
 
         val transfer = Transfer("Bob", "Not_" + BOBS_ACCOUNT.depositAddress, 10)
-        val mixer = new ConfiguredDepositReceivingMixerStep(config, accounts, fakeTransferService)
+        val mixer = new ConfiguredDepositReceivingMixerStep(config, fakeTransferService)
 
         // when
         val actual = mixer.onTransfer(transfer)

@@ -7,12 +7,13 @@ import java.lang.Thread.sleep
 import scala.util.Try
 
 class PollingWorkThread(
+    config: ConfigLike,
     transferService: TransferService,
     configuredDepositReceivingMixerStep: ConfiguredDepositReceivingMixerStep,
     distributingMixer: DistributingMixer
 ) extends Thread {
 
-    private val SLEEP_TIME_MILLIS = 5000
+    private val SLEEP_TIME_MILLIS = config.transactionPollingIntervalInSeconds * 1000
 
     override def run(): Unit = {
         while (true) {

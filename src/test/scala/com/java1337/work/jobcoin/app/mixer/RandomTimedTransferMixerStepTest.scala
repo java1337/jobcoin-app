@@ -1,7 +1,7 @@
 package com.java1337.work.jobcoin.app.mixer
 
+import com.java1337.work.jobcoin.app.ConfigHardcoded.BOBS_ACCOUNT
 import com.java1337.work.jobcoin.app.{ConfigHardcoded, TransferServiceFake}
-import com.java1337.work.jobcoin.app.TestHelper.BOBS_ACCOUNT
 import com.java1337.work.jobcoin.app.domain.Transfer
 import org.scalatest.{AsyncFlatSpec, Matchers}
 
@@ -14,11 +14,14 @@ class RandomTimedTransferMixerStepTest extends AsyncFlatSpec with Matchers {
     it should "delay sending the transfer by some amount" in {
 
         // given
-        val config = new ConfigHardcoded()
+        val config = new ConfigHardcoded() {
+            override val minimumWithdrawalTransferDelayInSeconds: Int = 3
+            override val maximumWithdrawalTransferDelayInSeconds: Int = 7
+        }
         val transfer = Transfer("Bob", BOBS_ACCOUNT.depositAddress, 10)
         val fakeTransferService = new TransferServiceFake(Future.successful(transfer))
 
-        val mixer = new RandomTimedTransferMixerStep(fakeTransferService, 3, 7)
+        val mixer = new RandomTimedTransferMixerStep(config, fakeTransferService)
 
         // when
         val startTimeMillis = System.currentTimeMillis()

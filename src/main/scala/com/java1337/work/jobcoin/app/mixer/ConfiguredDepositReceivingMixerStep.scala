@@ -11,13 +11,12 @@ import scala.concurrent.Future
  * 5. The mixer will transfer your bitcoin from the deposit address into a big “house
  *    account” along with all the other bitcoin currently being mixed
  */
-class ConfiguredDepositReceivingMixerStep(config: ConfigLike, accounts: Seq[Account], transferService: TransferService) extends MixerStepLike {
+class ConfiguredDepositReceivingMixerStep(config: ConfigLike, transferService: TransferService) extends MixerStepLike {
 
     private val logger: Logger = Logger.getLogger(getClass.getName)
-    private val supportedAccounts: Map[String, Account] = accounts.map { it => (it.depositAddress, it) }.toMap
 
     override def onTransfer(input: Transfer): Seq[Future[Transfer]] = {
-        val maybeAccount: Option[Account] = supportedAccounts.get(input.destinationAddress)
+        val maybeAccount: Option[Account] = config.supportedDepositAccountMap.get(input.destinationAddress)
         maybeAccount match {
             case Some(_) =>
                 logger.info(s"Processing transfer from account ${input.sourceAddress} to ${input.destinationAddress} of ${input.amount} Jobcoin")
